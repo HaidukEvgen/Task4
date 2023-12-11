@@ -1,15 +1,32 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { AppButtonComponent } from './button/button.component';
+import { UserService } from './user.service';
+import { UserManagerComponent } from './user-manager/user-manager.component';
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  lastLogin: string;
+  status: string;
+}
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, AppButtonComponent],
+  imports: [CommonModule, RouterOutlet, UserManagerComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = 'Task4';
+  users: User[] = [];
+
+  constructor(private userService: UserService) {}
+
+  ngOnInit() {
+    this.userService.getUsers().subscribe((data) => {
+      this.users = data;
+    });
+  }
 }

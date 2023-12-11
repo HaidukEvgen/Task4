@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 @Component({
   selector: 'app-button',
@@ -9,4 +9,9 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class AppButtonComponent {
   @Input() buttonText: string = '';
+  @Output() buttonClick: EventEmitter<void> = new EventEmitter<void>();
+  
+  handleButtonClick() {
+    this.buttonClick.emit();
+  }
 }
