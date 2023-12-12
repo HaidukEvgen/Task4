@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { AppTableComponent } from './table/table.component';
 import { UserActionsComponent } from './user-actions/user-actions.component';
 import { User } from '../app.component';
+import { UserService } from '../user.service';
 
 export interface TableUser extends User {
   checked: boolean;
@@ -17,7 +18,8 @@ export interface TableUser extends User {
 export class UserManagerComponent {
   @Input() users: User[] = [];
   mappedUsers: TableUser[] = [];
-  checkedUserIds: number[] = [];
+
+  constructor(private userService: UserService) {}
 
   ngOnInit() {
     this.mappedUsers = this.users.map((user) => ({
@@ -28,20 +30,18 @@ export class UserManagerComponent {
 
   setAll(checked: boolean) {
     this.mappedUsers.forEach((user) => (user.checked = checked));
-    this.setCheckedUserIds();
   }
 
-  setOne(id: number, checked: boolean) {
-    const targetUser = this.mappedUsers.find((user) => user.id == id);
+  deleteSelected() {
+    const checkedUserIds = this.mappedUsers.filter(user => !user.checked).map(user => user.id);
+    this.mappedUsers = this.mappedUsers.filter(user => !user.checked);
+    this.userService.deleteUsers(checkedUserIds)
+  }
+
+  setOne(props: {id: number, event: boolean}) {
+    const targetUser = this.mappedUsers.find((user) => user.id == props.id);
     if (targetUser) {
-      targetUser.checked = checked;
+      targetUser.checked = props.event;
     }
-    this.setCheckedUserIds();
-  }
-
-  setCheckedUserIds() {
-    this.checkedUserIds = this.mappedUsers
-      .filter((user) => user.checked)
-      .map((user) => user.id);
   }
 }

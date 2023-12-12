@@ -1,1 +1,1 @@
-<app-user-actions [userIds]="checkedUserIds"></app-user-actions> <app-table></app-table>
+<app-user-actions (deleteEvent)="deleteSelected()"></app-user-actions> <app-table [users]="mappedUsers" (setOneEvent)="setOne($event)" (setAllEvent)="setAll($event)"></app-table>
