@@ -15,7 +15,11 @@ export class UserService {
     return this.http.get<User[]>(`${this.apiUrl}/users`);
   }
 
-  blockUser(userIds: number[]): void {
-    this.http.patch(`${this.apiUrl}/users/block`, {userIds});
+  deleteUsers(userIds: number[]): Observable<User[]> {
+    return this.http.delete<User[]>(`${this.apiUrl}/users/delete??`, { body: userIds });
+  }
+
+  blockUser(userIds: number[]): Observable<User[]> {
+    return this.http.patch<User[]>(`${this.apiUrl}/users/block`, { body: userIds });
   }
 }
