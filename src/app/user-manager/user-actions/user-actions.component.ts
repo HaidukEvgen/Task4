@@ -10,7 +10,6 @@ import { UserService } from '../../user.service';
   styleUrl: './user-actions.component.css',
 })
 export class UserActionsComponent {
-  @Input() userIds: number[] = [];
   @Output() blockEvent = new EventEmitter();
   @Output() deleteEvent = new EventEmitter();
 
