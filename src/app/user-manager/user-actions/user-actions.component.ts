@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AppButtonComponent } from '../../button/button.component';
 import { UserService } from '../../user.service';
 
@@ -11,11 +11,16 @@ import { UserService } from '../../user.service';
 })
 export class UserActionsComponent {
   @Input() userIds: number[] = [];
+  @Output() blockEvent = new EventEmitter();
+  @Output() deleteEvent = new EventEmitter();
 
   constructor(private userService: UserService) {}
 
-  onBlockButtonClick() {
-    console.log(this.userIds);
-    this.userService.blockUser(this.userIds);
+  onBlock() {
+    this.blockEvent.emit();
+  }
+
+  onDelete() {
+    this.deleteEvent.emit();
   }
 }

@@ -28,20 +28,16 @@ export class UserManagerComponent {
 
   setAll(checked: boolean) {
     this.mappedUsers.forEach((user) => (user.checked = checked));
-    this.setCheckedUserIds();
   }
 
-  setOne(id: number, checked: boolean) {
-    const targetUser = this.mappedUsers.find((user) => user.id == id);
+  deleteSelected() {
+    this.mappedUsers = this.mappedUsers.filter(user => !user.checked)
+  }
+
+  setOne(props: {id: number, event: boolean}) {
+    const targetUser = this.mappedUsers.find((user) => user.id == props.id);
     if (targetUser) {
-      targetUser.checked = checked;
+      targetUser.checked = props.event;
     }
-    this.setCheckedUserIds();
-  }
-
-  setCheckedUserIds() {
-    this.checkedUserIds = this.mappedUsers
-      .filter((user) => user.checked)
-      .map((user) => user.id);
   }
 }
