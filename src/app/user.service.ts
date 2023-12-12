@@ -16,10 +16,18 @@ export class UserService {
   }
 
   deleteUsers(userIds: number[]): Observable<User[]> {
-    return this.http.delete<User[]>(`${this.apiUrl}/users/delete??`, { body: userIds });
+    return this.http.delete<User[]>(`${this.apiUrl}/users`, { body: userIds });
   }
 
-  blockUser(userIds: number[]): Observable<User[]> {
-    return this.http.patch<User[]>(`${this.apiUrl}/users/block`, { body: userIds });
+  blockUsers(userIds: number[]): Observable<User[]> {
+    return this.http.patch<User[]>(`${this.apiUrl}/users/block`, {
+      body: userIds,
+    });
+  }
+
+  unblockUsers(userIds: number[]) {
+    return this.http.patch<User[]>(`${this.apiUrl}/users/unblock`, {
+      body: userIds,
+    });
   }
 }

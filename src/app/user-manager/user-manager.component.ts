@@ -16,16 +16,21 @@ export interface TableUser extends User {
   styleUrl: './user-manager.component.css',
 })
 export class UserManagerComponent {
-  @Input() users: User[] = [];
   mappedUsers: TableUser[] = [];
 
   constructor(private userService: UserService) {}
 
   ngOnInit() {
-    this.mappedUsers = this.users.map((user) => ({
-      checked: Math.random() > 0.5,
-      ...user,
-    }));
+    this.getUsers();
+  }
+
+  getUsers() {
+    this.userService.getUsers().subscribe((data) => {
+      this.mappedUsers = data.map((user) => ({
+        checked: Math.random() > 0.5,
+        ...user,
+      }));
+    });
   }
 
   setAll(checked: boolean) {
@@ -33,12 +38,38 @@ export class UserManagerComponent {
   }
 
   deleteSelected() {
-    const checkedUserIds = this.mappedUsers.filter(user => !user.checked).map(user => user.id);
-    this.mappedUsers = this.mappedUsers.filter(user => !user.checked);
-    this.userService.deleteUsers(checkedUserIds)
+    const checkedUserIds = this.mappedUsers
+      .filter((user) => !user.checked)
+      .map((user) => user.id);
+    this.mappedUsers = this.mappedUsers.filter((user) => !user.checked);
+    this.userService.deleteUsers(checkedUserIds);
   }
 
-  setOne(props: {id: number, event: boolean}) {
+  blockSelected() {
+    const checkedUserIds = this.mappedUsers
+      .filter((user) => !user.checked)
+      .map((user) => user.id);
+    this.mappedUsers
+      .filter((user) => user.checked)
+      .forEach((user) => {
+        user.status = 'Blocked';
+      });
+    this.userService.blockUsers(checkedUserIds);
+  }
+
+  unblockSelected() {
+    const checkedUserIds = this.mappedUsers
+      .filter((user) => !user.checked)
+      .map((user) => user.id);
+    this.mappedUsers
+      .filter((user) => user.checked)
+      .forEach((user) => {
+        user.status = 'Active';
+      });
+    this.userService.unblockUsers(checkedUserIds);
+  }
+
+  setOne(props: { id: number; event: boolean }) {
     const targetUser = this.mappedUsers.find((user) => user.id == props.id);
     if (targetUser) {
       targetUser.checked = props.event;

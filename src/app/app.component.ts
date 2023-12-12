@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { UserService } from './user.service';
@@ -23,10 +23,4 @@ export class AppComponent {
   users: User[] = [];
 
   constructor(private userService: UserService) {}
-
-  ngOnInit() {
-    this.userService.getUsers().subscribe((data) => {
-      this.users = data;
-    });
-  }
 }

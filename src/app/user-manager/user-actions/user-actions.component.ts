@@ -10,13 +10,19 @@ import { UserService } from '../../user.service';
   styleUrl: './user-actions.component.css',
 })
 export class UserActionsComponent {
+
   @Output() blockEvent = new EventEmitter();
+  @Output() unblockEvent = new EventEmitter();
   @Output() deleteEvent = new EventEmitter();
 
   constructor(private userService: UserService) {}
 
   onBlock() {
     this.blockEvent.emit();
+  }
+
+  onUnblock() {
+    this.unblockEvent.emit();
   }
 
   onDelete() {
