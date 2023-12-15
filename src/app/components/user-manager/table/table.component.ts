@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { TableUser } from '../user-manager.component';
+import { TableUser } from '../../../models/user.model';
 
 @Component({
   selector: 'app-table',
@@ -12,7 +12,7 @@ import { TableUser } from '../user-manager.component';
 })
 export class AppTableComponent {
   @Input() users: TableUser[] = [];
-  
+
   @Output() setOneEvent = new EventEmitter();
   @Output() setAllEvent = new EventEmitter();
 

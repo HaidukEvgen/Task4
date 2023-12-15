@@ -1,12 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { AppTableComponent } from './table/table.component';
 import { UserActionsComponent } from './user-actions/user-actions.component';
-import { User } from '../app.component';
-import { UserService } from '../user.service';
-
-export interface TableUser extends User {
-  checked: boolean;
-}
+import { UserService } from '../../services/user.service';
+import { TableUser } from '../../models/user.model';
 
 @Component({
   selector: 'app-user-manager',
