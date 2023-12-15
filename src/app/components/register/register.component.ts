@@ -6,6 +6,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { UserService } from '../../services/user.service';
+import { UserRegisterModel } from '../../models/user.model';
 
 @Component({
   selector: 'app-register',
@@ -21,14 +23,31 @@ export class RegisterComponent {
     password: new FormControl('', Validators.required),
   });
 
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    private userService: UserService
+  ) {}
 
   onSubmit(): void {
     if (this.registerForm.valid) {
-      console.log(this.registerForm.value);
+      const userRegisterModel: UserRegisterModel = {
+        name: this.registerForm.value.name!,
+        email: this.registerForm.value.email!,
+        password: this.registerForm.value.password!,
+      };
+
+      this.userService.register(userRegisterModel).subscribe({
+        next: (res) => {
+          alert(res.message);
+        },
+        error: (err) => {
+          alert(err.error.message);
+        },
+      });
+
       this.registerForm.reset();
     } else {
-      console.log("Form is not valid");
+      alert('Form is not valid');
     }
   }
 }

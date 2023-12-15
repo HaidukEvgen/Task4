@@ -6,6 +6,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { UserLoginModel } from '../../models/user.model';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -20,14 +22,30 @@ export class LoginComponent {
     password: new FormControl('', Validators.required),
   });
 
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    private userService: UserService
+  ) {}
 
   onSubmit(): void {
     if (this.loginForm.valid) {
-      console.log(this.loginForm.value);
+      const userLoginModel: UserLoginModel = {
+        email: this.loginForm.value.email!,
+        password: this.loginForm.value.password!,
+      };
+
+      this.userService.login(userLoginModel).subscribe({
+        next:(res)=>{
+          alert(res.message);
+        },
+        error:(err)=>{
+          alert(err.error.message);
+        }
+      });
+      
       this.loginForm.reset();
     } else {
-      console.log("Form is not valid");
+      alert('Form is not valid');
     }
   }
 }

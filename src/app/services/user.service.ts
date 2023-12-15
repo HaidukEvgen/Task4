@@ -7,22 +7,16 @@ import { User, UserLoginModel, UserRegisterModel } from '../models/user.model';
   providedIn: 'root',
 })
 export class UserService {
-  apiUrl = 'http://localhost:3000';
+  apiUrl = 'http://localhost:5286';
 
   constructor(private http: HttpClient) {}
 
   login(userLoginModel: UserLoginModel) {
-    return this.http.post<UserLoginModel>(
-      `${this.apiUrl}/users/login`,
-      userLoginModel
-    );
+    return this.http.post<any>(`${this.apiUrl}/users/login`, userLoginModel);
   }
 
   register(userRegisterModel: UserRegisterModel) {
-    return this.http.post<UserRegisterModel>(
-      `${this.apiUrl}/users/register`,
-      userRegisterModel
-    );
+    return this.http.post<any>(`${this.apiUrl}/users/register`, userRegisterModel);
   }
 
   getUsers(): Observable<User[]> {
