@@ -3,6 +3,8 @@ import { AppTableComponent } from './table/table.component';
 import { UserActionsComponent } from './user-actions/user-actions.component';
 import { UserService } from '../../services/user.service';
 import { TableUser } from '../../models/user.model';
+import { AuthService } from '../../services/auth.service';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-user-manager',
@@ -13,11 +15,23 @@ import { TableUser } from '../../models/user.model';
 })
 export class UserManagerComponent {
   mappedUsers: TableUser[] = [];
-
-  constructor(private userService: UserService) {}
+  username: string = '';
+  constructor(
+    private userService: UserService,
+    private authService: AuthService,
+    private storageService: StorageService
+  ) {}
 
   ngOnInit() {
     this.getUsers();
+    this.storageService.getUsername().subscribe((val) => {
+      let usernameFromToken = this.authService.getUsername();
+      this.username = val || usernameFromToken;
+    });
+  }
+
+  logout() {
+    this.authService.logout();
   }
 
   getUsers() {

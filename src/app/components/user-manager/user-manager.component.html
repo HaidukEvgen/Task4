@@ -1,8 +1,18 @@
+<nav class="navbar bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Task4</a>
+    <div>
+      Hello, {{ username }}! <a href="login" (click)="logout()">Logout</a>
+    </div>
+  </div>
+</nav>
+
 <app-user-actions
   (deleteEvent)="deleteSelected()"
   (blockEvent)="blockSelected()"
   (unblockEvent)="unblockSelected()"
 ></app-user-actions>
+
 <app-table
   [users]="mappedUsers"
   (setOneEvent)="setOne($event)"

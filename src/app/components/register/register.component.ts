@@ -9,6 +9,8 @@ import {
 import { UserService } from '../../services/user.service';
 import { UserRegisterModel } from '../../models/user.model';
 import { Router } from '@angular/router';
+import { NgToastService } from 'ng-angular-popup';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
@@ -27,29 +29,69 @@ export class RegisterComponent {
   constructor(
     private formBuilder: FormBuilder,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private toast: NgToastService
   ) {}
 
   onSubmit(): void {
     if (this.registerForm.valid) {
-      const userRegisterModel: UserRegisterModel = {
-        name: this.registerForm.value.name!,
-        email: this.registerForm.value.email!,
-        password: this.registerForm.value.password!,
-      };
-
-      this.userService.register(userRegisterModel).subscribe({
-        next: (res) => {
-          alert(res.message);
-          this.router.navigate(['login']);
-          this.registerForm.reset();
-        },
-        error: (err) => {
-          alert(err.error.message);
-        },
+      const userRegisterModel = this.createUserRegisterModel();
+      this.registerUser(userRegisterModel);
+    } else {
+      this.displayFormError();
+    }
+  }
+  
+  private createUserRegisterModel(): UserRegisterModel {
+    return {
+      name: this.registerForm.value.name!,
+      email: this.registerForm.value.email!,
+      password: this.registerForm.value.password!,
+    };
+  }
+  
+  private registerUser(userRegisterModel: UserRegisterModel): void {
+    this.userService.register(userRegisterModel).subscribe({
+      next: (res) => {
+        this.handleRegistrationSuccess(res);
+      },
+      error: (err) => {
+        this.handleRegistrationError(err);
+      },
+    });
+  }
+  
+  private handleRegistrationSuccess(res: any): void {
+    this.toast.success({
+      detail: 'Success',
+      summary: res.message,
+      duration: 3000,
+    });
+    this.router.navigate(['login']);
+    this.registerForm.reset();
+  }
+  
+  private handleRegistrationError(err: any): void {
+    if (err instanceof HttpErrorResponse && err.status === 0) {
+      this.toast.error({
+        detail: 'Error',
+        summary: 'Failed to connect to the API',
+        duration: 3000,
       });
     } else {
-      alert('Form is not valid');
+      this.toast.error({
+        detail: 'Error',
+        summary: err.error.message,
+        duration: 3000,
+      });
     }
+  }
+  
+  private displayFormError(): void {
+    this.toast.error({
+      detail: 'Error',
+      summary: 'Form is Invalid',
+      duration: 3000,
+    });
   }
 }

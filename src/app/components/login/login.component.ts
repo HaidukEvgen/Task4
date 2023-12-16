@@ -9,11 +9,15 @@ import {
 import { UserLoginModel } from '../../models/user.model';
 import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
+import { NgToastModule, NgToastService } from 'ng-angular-popup';
+import { AuthService } from '../../services/auth.service';
+import { StorageService } from '../../services/storage.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, NgToastModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -26,28 +30,73 @@ export class LoginComponent {
   constructor(
     private formBuilder: FormBuilder,
     private userService: UserService,
-    private router: Router
+    private authService: AuthService,
+    private storageService: StorageService,
+    private router: Router,
+    private toast: NgToastService
   ) {}
 
   onSubmit(): void {
     if (this.loginForm.valid) {
-      const userLoginModel: UserLoginModel = {
-        email: this.loginForm.value.email!,
-        password: this.loginForm.value.password!,
-      };
-
-      this.userService.login(userLoginModel).subscribe({
-        next: (res) => {
-          alert(res.message);
-          this.router.navigate(['user-manager']);
-          this.loginForm.reset();
-        },
-        error: (err) => {
-          alert(err.error.message);
-        },
+      const userLoginModel = this.createUserLoginModel();
+      this.loginUser(userLoginModel);
+    } else {
+      this.displayFormError();
+    }
+  }
+  
+  private createUserLoginModel(): UserLoginModel {
+    return {
+      email: this.loginForm.value.email!,
+      password: this.loginForm.value.password!,
+    };
+  }
+  
+  private loginUser(userLoginModel: UserLoginModel): void {
+    this.userService.login(userLoginModel).subscribe({
+      next: (res) => {
+        this.handleLoginSuccess(res);
+      },
+      error: (err) => {
+        this.handleLoginError(err);
+      },
+    });
+  }
+  
+  private handleLoginSuccess(res: any): void {
+    this.authService.storeToken(res.token);
+    const username = this.authService.getUsername();
+    this.storageService.setUsername(username);
+    this.toast.success({
+      detail: 'Success',
+      summary: res.message,
+      duration: 3000,
+    });
+    this.router.navigate(['user-manager']);
+    this.loginForm.reset();
+  }
+  
+  private handleLoginError(err: any): void {
+    if (err instanceof HttpErrorResponse && err.status === 0) {
+      this.toast.error({
+        detail: 'Error',
+        summary: 'Failed to connect to the API',
+        duration: 3000,
       });
     } else {
-      alert('Form is not valid');
+      this.toast.error({
+        detail: 'Error',
+        summary: err.error.message,
+        duration: 3000,
+      });
     }
+  }
+  
+  private displayFormError(): void {
+    this.toast.error({
+      detail: 'Error',
+      summary: 'Form is Invalid',
+      duration: 3000,
+    });
   }
 }
