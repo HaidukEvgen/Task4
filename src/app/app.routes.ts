@@ -12,4 +12,5 @@ export const routes: Routes = [
     component: UserManagerComponent,
     canActivate: [AuthGuard],
   },
+  { path: '', component: UserManagerComponent, canActivate: [AuthGuard] },
 ];
