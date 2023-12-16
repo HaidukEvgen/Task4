@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { UserLoginModel } from '../../models/user.model';
 import { UserService } from '../../services/user.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -24,7 +25,8 @@ export class LoginComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router
   ) {}
 
   onSubmit(): void {
@@ -35,15 +37,15 @@ export class LoginComponent {
       };
 
       this.userService.login(userLoginModel).subscribe({
-        next:(res)=>{
+        next: (res) => {
           alert(res.message);
+          this.router.navigate(['user-manager']);
+          this.loginForm.reset();
         },
-        error:(err)=>{
+        error: (err) => {
           alert(err.error.message);
-        }
+        },
       });
-      
-      this.loginForm.reset();
     } else {
       alert('Form is not valid');
     }
