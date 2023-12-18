@@ -1,14 +1,20 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import { routes } from './app.routes';
 import { AuthGuard } from './guards/auth.guard';
+import { TokenInterceptor } from './interceptors/token.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     importProvidersFrom(HttpClientModule),
-    [AuthGuard]
+    [AuthGuard],
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    }
   ],
 };

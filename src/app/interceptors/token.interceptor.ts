@@ -9,7 +9,9 @@ import { Observable, catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { NgToastService } from 'ng-angular-popup';
 import { Router } from '@angular/router';
+import { Injectable } from '@angular/core';
 
+@Injectable()
 export class TokenInterceptor implements HttpInterceptor {
   constructor(
     private authService: AuthService,
@@ -33,6 +35,15 @@ export class TokenInterceptor implements HttpInterceptor {
           this.toast.error({
             detail: 'Error',
             summary: 'Token expired. Please, login again',
+            duration: 3000,
+          });
+          this.authService.logout();
+          this.router.navigate(['login']);
+        }
+        if (error.status === 403) {
+          this.toast.error({
+            detail: 'Error',
+            summary: error.error,
             duration: 3000,
           });
           this.authService.logout();

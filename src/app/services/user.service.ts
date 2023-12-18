@@ -23,15 +23,11 @@ export class UserService {
     return this.http.get<User[]>(`${this.apiUrl}`);
   }
 
-  blockUsers(userIds: number[]) {
-    return this.http.patch<any>(`${this.apiUrl}/block`, userIds);
-  }
-  
-  unblockUsers(userIds: number[]) {
-    return this.http.patch<any>(`${this.apiUrl}/unblock`, userIds);
+  setStatuses(userIds: string[], status: number) {
+    return this.http.patch<any>(`${this.apiUrl}/status/${status}`, userIds);
   }
 
-  deleteUsers(userIds: number[]) {
+  deleteUsers(userIds: string[]) {
     const options = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'

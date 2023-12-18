@@ -9,8 +9,8 @@
 
 <app-user-actions
   (deleteEvent)="deleteSelected()"
-  (blockEvent)="blockSelected()"
-  (unblockEvent)="unblockSelected()"
+  (blockEvent)="setStatusToSelectedUsers(1)"
+  (unblockEvent)="setStatusToSelectedUsers(0)"
 ></app-user-actions>
 
 <app-table

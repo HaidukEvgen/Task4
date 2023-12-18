@@ -5,6 +5,8 @@ import { UserService } from '../../services/user.service';
 import { TableUser } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { StorageService } from '../../services/storage.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { NgToastService } from 'ng-angular-popup';
 
 @Component({
   selector: 'app-user-manager',
@@ -21,7 +23,8 @@ export class UserManagerComponent {
   constructor(
     private userService: UserService,
     private authService: AuthService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private toast: NgToastService
   ) {}
 
   ngOnInit() {
@@ -32,50 +35,72 @@ export class UserManagerComponent {
     });
   }
 
-  blockSelected() {
-    const checkedUserIds = this.mappedUsers
-      .filter((user) => user.checked)
-      .map((user) => user.id);
-    if ((checkedUserIds.length == 0)) return;
-    this.userService
-      .blockUsers(checkedUserIds)
-      .subscribe(() => this.getUsers());
-    this.tableComponent.allChecked = false;
+  getUsers() {
+    this.userService.getUsers().subscribe(
+      (data) => {
+        this.mappedUsers = data.map((user) => ({
+          checked: false,
+          ...user,
+        }));
+      },
+      (error) => {
+        this.handleRequestError(error);
+      }
+    );
   }
 
-  unblockSelected() {
+  setStatusToSelectedUsers(status: number) {
     const checkedUserIds = this.mappedUsers
       .filter((user) => user.checked)
       .map((user) => user.id);
-    if ((checkedUserIds.length == 0)) return;
-    this.userService
-      .unblockUsers(checkedUserIds)
-      .subscribe(() => this.getUsers());
-    this.tableComponent.allChecked = false;
+    if (checkedUserIds.length === 0) return;
+    this.userService.setStatuses(checkedUserIds, status).subscribe(
+      () => {
+        this.getUsers();
+        this.tableComponent.allChecked = false;
+      },
+      (error) => {
+        this.handleRequestError(error);
+      }
+    );
   }
 
   deleteSelected() {
     const checkedUserIds = this.mappedUsers
       .filter((user) => user.checked)
       .map((user) => user.id);
-    if ((checkedUserIds.length == 0)) return;
-    this.userService
-      .deleteUsers(checkedUserIds)
-      .subscribe(() => this.getUsers());
-    this.tableComponent.allChecked = false;
+    if (checkedUserIds.length === 0) return;
+    this.userService.deleteUsers(checkedUserIds).subscribe(
+      () => {
+        this.getUsers();
+        this.tableComponent.allChecked = false;
+      },
+      (error) => {
+        this.handleRequestError(error);
+      }
+    );
+  }
+
+  private handleRequestError(error: any): void {
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 0) {
+        this.toast.error({
+          detail: 'Error',
+          summary: 'Failed to connect to the API',
+          duration: 3000,
+        });
+      } else {
+        this.toast.error({
+          detail: 'Error',
+          summary: error.error,
+          duration: 3000,
+        });
+      }
+    }
   }
 
   logout() {
     this.authService.logout();
-  }
-
-  getUsers() {
-    this.userService.getUsers().subscribe((data) => {
-      this.mappedUsers = data.map((user) => ({
-        checked: false,
-        ...user,
-      }));
-    });
   }
 
   setAll(checked: boolean) {
@@ -83,7 +108,7 @@ export class UserManagerComponent {
     this.tableComponent.allChecked = checked;
   }
 
-  setOne(props: { id: number; event: boolean }) {
+  setOne(props: { id: string; event: boolean }) {
     const targetUser = this.mappedUsers.find((user) => user.id == props.id);
     if (targetUser) {
       targetUser.checked = props.event;
