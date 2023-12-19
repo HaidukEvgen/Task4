@@ -1,3 +1,11 @@
-<button (click)="onBlock()">Block</button>
-<button (click)="onUnblock()">Unblock</button>
-<button (click)="onDelete()">Delete</button>
+<div class="btn-group mt-3" role="group" aria-label="Button group">
+  <button class="btn btn-bordered" (click)="onBlock()">
+    <i class="fa-solid fa-lock"></i> Block
+  </button>
+  <button class="btn btn-bordered" (click)="onUnblock()">
+    <i class="fa-solid fa-lock-open"></i> Unblock
+  </button>
+  <button class="btn btn-delete" (click)="onDelete()">
+    <i class="fa-solid fa-trash-can"></i> Delete
+  </button>
+</div>
