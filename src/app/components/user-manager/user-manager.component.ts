@@ -30,8 +30,7 @@ export class UserManagerComponent {
   ngOnInit() {
     this.getUsers();
     this.storageService.getUsername().subscribe((val) => {
-      let usernameFromToken = this.authService.getUsername();
-      this.username = val || usernameFromToken;
+      this.username = val || this.authService.getUsername();
     });
   }
 

@@ -44,14 +44,14 @@ export class LoginComponent {
       this.displayFormError();
     }
   }
-  
+
   private createUserLoginModel(): UserLoginModel {
     return {
       email: this.loginForm.value.email!,
       password: this.loginForm.value.password!,
     };
   }
-  
+
   private loginUser(userLoginModel: UserLoginModel): void {
     this.userService.login(userLoginModel).subscribe({
       next: (res) => {
@@ -62,8 +62,8 @@ export class LoginComponent {
       },
     });
   }
-  
-  private handleLoginSuccess(res: any): void {
+
+  private handleLoginSuccess(res: any) {
     this.authService.storeToken(res.token);
     const username = this.authService.getUsername();
     this.storageService.setUsername(username);
@@ -75,8 +75,8 @@ export class LoginComponent {
     this.router.navigate(['user-manager']);
     this.loginForm.reset();
   }
-  
-  private handleLoginError(err: any): void {
+
+  private handleLoginError(err: any) {
     if (err instanceof HttpErrorResponse && err.status === 0) {
       this.toast.error({
         detail: 'Error',
@@ -91,8 +91,8 @@ export class LoginComponent {
       });
     }
   }
-  
-  private displayFormError(): void {
+
+  private displayFormError() {
     this.toast.error({
       detail: 'Error',
       summary: 'Form is Invalid',

@@ -3,7 +3,12 @@ export interface User {
   name: string;
   email: string;
   lastLogin: string;
-  status: string;
+  status: UserStatus;
+}
+
+export enum UserStatus {
+  Active = 'Active',
+  Blocked = 'Blocked',
 }
 
 export interface TableUser extends User {

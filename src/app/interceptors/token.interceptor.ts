@@ -31,23 +31,27 @@ export class TokenInterceptor implements HttpInterceptor {
     });
     return next.handle(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
-        if (error.status === 401) {
-          this.toast.error({
-            detail: 'Error',
-            summary: 'Token expired. Please, login again',
-            duration: 3000,
-          });
-          this.authService.logout();
-          this.router.navigate(['login']);
-        }
-        if (error.status === 403) {
-          this.toast.error({
-            detail: 'Error',
-            summary: error.error,
-            duration: 3000,
-          });
-          this.authService.logout();
-          this.router.navigate(['login']);
+        switch (error.status) {
+          case 401:
+            this.toast.error({
+              detail: 'Error',
+              summary: 'Token expired. Please, login again',
+              duration: 3000,
+            });
+            this.authService.logout();
+            this.router.navigate(['login']);
+            break;
+          case 403:
+            this.toast.error({
+              detail: 'Error',
+              summary: error.error.message,
+              duration: 3000,
+            });
+            this.authService.logout();
+            this.router.navigate(['login']);
+            break;
+          default:
+            break;
         }
         return throwError(error);
       })
