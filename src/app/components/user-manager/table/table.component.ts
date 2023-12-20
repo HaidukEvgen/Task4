@@ -1,7 +1,14 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Injectable,
+  Input,
+  Output,
+} from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TableUser } from '../../../models/user.model';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-table',
@@ -10,6 +17,7 @@ import { TableUser } from '../../../models/user.model';
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
 })
+@Injectable()
 export class AppTableComponent {
   @Input() users: TableUser[] = [];
 
@@ -24,6 +32,13 @@ export class AppTableComponent {
     'lastLogin',
     'status',
   ];
+
+  constructor(private datePipe: DatePipe) {}
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return this.datePipe.transform(date, 'HH:mm:ss, d MMM, yyyy')!;
+  }
 
   setAll(event: any) {
     this.setAllEvent.emit(event);

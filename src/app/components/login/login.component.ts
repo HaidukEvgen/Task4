@@ -86,7 +86,7 @@ export class LoginComponent {
     } else {
       this.toast.error({
         detail: 'Error',
-        summary: err.error.message,
+        summary: err.error,
         duration: 3000,
       });
     }
